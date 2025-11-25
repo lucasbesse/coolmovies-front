@@ -1,0 +1,23 @@
+mutation CreateReview(
+  $movieId: UUID!
+  $title: String!
+  $body: String!
+  $rating: Int!
+  $userReviewerId: UUID!
+) {
+  createMovieReview(
+    input: {
+      movieReview: {
+        movieId: $movieId
+        title: $title
+        body: $body
+        rating: $rating
+        userReviewerId: $userReviewerId
+      }
+    }
+  ) {
+    movieReview {
+      id
+    }
+  }
+}

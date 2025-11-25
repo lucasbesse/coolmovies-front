@@ -13,7 +13,7 @@ import { memo } from 'react';
 import { useCurrentUserLazyQuery } from '../../../generated/graphql';
 import { FetchButton } from '../components/FetchButton';
 
-const primary = '#1976d2';
+const primary = '#3d59a0ff';
 
 const Example = () => {
   const dispatch = useAppDispatch();

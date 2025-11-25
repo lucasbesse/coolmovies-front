@@ -1,0 +1,12 @@
+query GetReviews {
+  allMovieReviews {
+    nodes {
+      id
+      title
+      body
+      rating
+      movieId
+      userReviewerId
+    }
+  }
+}

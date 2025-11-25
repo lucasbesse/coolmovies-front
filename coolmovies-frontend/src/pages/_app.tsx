@@ -6,10 +6,24 @@ import Head from 'next/head';
 import { createStore } from '../state';
 import { EnhancedStore } from '@reduxjs/toolkit';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { createTheme, ThemeProvider } from '@mui/material';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const [store, setStore] = useState<EnhancedStore | null>(null);
   const [client, setClient] = useState<ApolloClient<any> | null>(null);
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#3d59a0ff',
+      },
+      secondary: {
+        main: '#8ca5e2ff',
+        light: '#d5e2fdff',
+      },
+    },
+  });
+
   React.useEffect(() => {
     const client = new ApolloClient({
       cache: new InMemoryCache(),
@@ -31,7 +45,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <ReduxProvider store={store}>
         <ApolloProvider client={client}>
-          <Component {...pageProps} />
+          <ThemeProvider theme={theme}>
+            <Component {...pageProps} />
+          </ThemeProvider>
         </ApolloProvider>
       </ReduxProvider>
     </>
