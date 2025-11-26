@@ -5,8 +5,17 @@ query GetReviews {
       title
       body
       rating
-      movieId
-      userReviewerId
+
+      movieByMovieId {
+        id
+        title
+        imgUrl
+      }
+
+      userReviewer: userByUserReviewerId {
+        id
+        name
+      }
     }
   }
 }

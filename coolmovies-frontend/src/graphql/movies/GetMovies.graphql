@@ -1,0 +1,9 @@
+query GetMovies {
+  allMovies {
+    nodes {
+      id
+      title
+      imgUrl
+    }
+  }
+}

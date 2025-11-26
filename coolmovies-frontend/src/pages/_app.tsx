@@ -19,7 +19,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       },
       secondary: {
         main: '#8ca5e2ff',
-        light: '#d5e2fdff',
+        light: '#cae4ffff',
       },
     },
   });

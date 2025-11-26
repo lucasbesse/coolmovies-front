@@ -1,91 +1,93 @@
-import { Card, CardContent, Avatar, Typography, Box, Rating } from "@mui/material";
+import { Card, CardContent, Avatar, Typography, Box, Rating, Button } from "@mui/material";
 import { MovieReview } from "../../../generated/graphql";
+import { useState } from "react";
 
 type Props = {
   review: MovieReview;
 };
 
-// boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
-
 export default function ReviewCard({ review }: Props) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <Card
       sx={{
         borderRadius: "24px",
-        p: 0,
         width: 360,
-        height: 330,
+        height: 360,
+        p: 3,
         display: "flex",
-        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
         flexDirection: "column",
-        justifyContent: "space-between",
-        backgroundColor: "secondary.light",
+        alignItems: "center",
+        textAlign: "center",
+        boxShadow: "0 3px 12px rgba(0,0,0,0.12)",
+        backgroundColor: "white",
+        border: "1px solid #cae4ffff",
       }}
     >
-      <CardContent
-        sx={{
-          p: 3,
-          pb: 1,
-          flexGrow: 1,
-        }}
-      >
-        <Rating value={review.rating ?? 5} readOnly size="small" sx={{ mb: 1 }} />
+      <Rating value={review.rating ?? 0} readOnly size="small" sx={{ mb: 3 }} />
 
-        <Typography
-            sx={{
-                maxHeight: 170,
-                overflowY: "auto",
-                paddingRight: 2,
-                marginTop: 1,
-                scrollbarWidth: "thin",
-                scrollbarColor: "#888 transparent",
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <Avatar src={`https://i.pravatar.cc/150?u=${review.id}`} sx={{ width: 48, height: 48, mr: 1 }} />
 
-                "&::-webkit-scrollbar": {
-                width: "8px",
-                },
-                "&::-webkit-scrollbar-track": {
-                background: "transparent",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#888",
-                borderRadius: "8px",
-                border: "2px solid transparent",
-                backgroundClip: "content-box",
-                },
-            }}
-        >
-          {review.body}
-        </Typography>
-      </CardContent>
-
-      <Box
-        sx={{
-          mt: 2,
-          p: 2,
-          display: "flex",
-          width: "60%",
-          alignItems: "center",
-          background: "#fff",
-          borderBottomLeftRadius: "24px",
-          borderBottomRightRadius: "0px",
-          borderTopLeftRadius: "2px",
-          borderTopRightRadius: "24px",
-        }}
-      >
-        <Avatar src="https://i.pravatar.cc/100" sx={{ width: 40, height: 40, mr: 1 }} />
-
-        <Box sx={{ ml: 1, textAlign: "left" }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Box sx={{ textAlign: "left" }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
             {review.title}
           </Typography>
 
-          <Typography variant="caption" sx={{ color: "#666" }}>
+          <Typography variant="caption" sx={{ color: "gray" }}>
             @username
           </Typography>
         </Box>
       </Box>
+
+      <Typography
+        sx={{
+          fontSize: "0.95rem",
+          color: "#333",
+          maxHeight: expanded ? 220 : 160,
+          overflowY: expanded ? "auto" : "hidden",
+          transition: "0.2s ease",
+          mb: 1,
+
+          ...( !expanded && {
+            display: "-webkit-box",
+            WebkitLineClamp: 7,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }),
+
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(0,0,0,0.3) transparent",
+          "&::-webkit-scrollbar": { width: "6px" },
+          "&::-webkit-scrollbar-track": { background: "transparent" },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(0,0,0,0.35)",
+            borderRadius: "8px",
+          },
+        }}
+      >
+        {review.body}
+      </Typography>
+
+      {!expanded ? (
+        <Button
+          variant="text"
+          onClick={() => setExpanded(true)}
+          sx={{ textTransform: "none", fontSize: "0.9rem" }}
+        >
+          See more
+        </Button>
+      ) : (
+        <Button
+          variant="text"
+          onClick={() => setExpanded(false)}
+          sx={{ textTransform: "none", fontSize: "0.9rem" }}
+        >
+          See less
+        </Button>
+      )}
     </Card>
   );
 }
-
-
