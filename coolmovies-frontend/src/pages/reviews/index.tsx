@@ -4,16 +4,23 @@ import {
   useGetMoviesQuery,
   MovieReview,
   Movie,
+  useCreateReviewMutation,
+  useGetCurrentUserQuery
 } from "../../generated/graphql";
 import MoviesList from "../../features/example/components/movies/MoviesList";
 import ReviewsList from "./components/ReviewsList";
 import MoviesSmallCard from "../../features/example/components/movies/MovieSmallCard";
+import AddReviewModal from "./components/AddReviewModal";
+import { Button } from "@mui/material";
 
 export default function ReviewsPage() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const moviesQuery = useGetMoviesQuery();
   const reviewsQuery = useGetReviewsQuery();
+  const { data: userData } = useGetCurrentUserQuery();
+  const [createReview] = useCreateReviewMutation();
 
   if (moviesQuery.loading || reviewsQuery.loading) return <div>Loading...</div>;
   if (moviesQuery.error || reviewsQuery.error) return <div>Error loading data.</div>;
@@ -26,6 +33,10 @@ export default function ReviewsPage() {
     (r): r is MovieReview => r !== null
   );
 
+  const filteredReviews = selectedMovie ? allReviews.filter(
+    (r) => r.movieByMovieId?.id === selectedMovie.id
+  ): [];
+
   function getAverageRating(movieId: string) {
     const reviewsForMovie = allReviews.filter(r => r.movieByMovieId?.id === movieId);
 
@@ -36,10 +47,34 @@ export default function ReviewsPage() {
     return Number((sum / reviewsForMovie.length).toFixed(1));
   }
 
+  async function handleCreateReview({
+    title,
+    body,
+    rating,
+  }: {
+    title: string;
+    body: string;
+    rating: number;
+  }) {
+    if (!userData?.currentUser) return;
 
-  const filteredReviews = selectedMovie
-    ? allReviews.filter((r) => r.movieByMovieId?.id === selectedMovie.id)
-    : [];
+    try {
+      await createReview({
+        variables: {
+          movieId: selectedMovie?.id,
+          title,
+          body,
+          rating,
+          userReviewerId: userData.currentUser.id,
+        },
+      });
+
+      reviewsQuery.refetch();
+
+    } catch (error) {
+      console.error("Error creating review", error);
+    }
+  }
 
   return (
     <div style={{ padding: 40, textAlign: "center" }}>
@@ -53,24 +88,14 @@ export default function ReviewsPage() {
         }}
       >
         {selectedMovie && (
-          <button
+          <Button
             onClick={() => setSelectedMovie(null)}
-            style={{
-              position: "absolute",
-              left: 0,
-              padding: "12px 24px",
-              borderRadius: 8,
-              border: "none",
-              cursor: "pointer",
-              fontSize: "15px",
-              backgroundColor: "#8ca5e2ff",
-              color: "white",
-            }}
+            variant="text"
+            startIcon={<i className="fa-solid fa-arrow-left"></i>}
+            sx={{ fontSize: "18px" }}
           >
-           Back
-          </button>
+          </Button>
         )}
-
         <h1 style={{ margin: 0 }}>{selectedMovie ? <>Reviews <span style={{ color: "#afadadff", fontSize: "26px" }}>({filteredReviews.length})</span></> : "Available Movies"}</h1>
       </div>
 
@@ -81,9 +106,24 @@ export default function ReviewsPage() {
       {selectedMovie && (
         <>
           <MoviesSmallCard selectedMovie={selectedMovie} getAverageRating={getAverageRating}/>
+          <div style={{width: '100%', display: 'flex', justifyContent: 'center', margin: '20px 0'}}>
+            <Button
+              onClick={() => setOpenModal(true)}
+              variant="contained"
+            >
+            + Add Review
+            </Button>
+          </div>
           <ReviewsList reviews={filteredReviews} />
         </>
       )}
+
+      <AddReviewModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={(data) => handleCreateReview(data)}
+      />
+      
     </div>
   );
 }

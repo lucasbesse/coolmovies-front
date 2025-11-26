@@ -18,6 +18,11 @@ mutation CreateReview(
   ) {
     movieReview {
       id
+      title
+      body
+      rating
+      movieId
+      userReviewerId
     }
   }
 }
