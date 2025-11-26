@@ -25,7 +25,7 @@ export default function ReviewCard({ review }: Props) {
         border: "1px solid #cae4ffff",
       }}
     >
-      <Rating value={review.rating ?? 0} readOnly size="small" sx={{ mb: 3 }} />
+      <Rating value={review.rating ?? 0} precision={0.5} readOnly size="small" sx={{ mb: 3 }} />
 
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
         <Avatar src={`https://i.pravatar.cc/150?u=${review.id}`} sx={{ width: 48, height: 48, mr: 1 }} />

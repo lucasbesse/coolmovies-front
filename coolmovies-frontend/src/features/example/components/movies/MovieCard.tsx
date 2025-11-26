@@ -4,9 +4,10 @@ import { Movie } from "../../../../generated/graphql";
 type Props = {
   movie: Movie;
   onSelect: (movie: Movie) => void;
+  getAverageRating: (movieId: string) => number;
 };
 
-export default function MovieCard({ movie, onSelect }: Props) {
+export default function MovieCard({ movie, onSelect, getAverageRating }: Props) {
   return (
     <Card
       sx={{
@@ -45,12 +46,12 @@ export default function MovieCard({ movie, onSelect }: Props) {
             {movie.title}
           </Typography>
 
-          <Rating
-            value={5}
-            readOnly
-            size="small"
-            sx={{ alignSelf: "flex-start" }}
-          />
+          <div style={{display: "flex", alignItems: "center", gap: 5}}>
+            <Rating value={getAverageRating(movie.id)} readOnly size="small" precision={0.5} />
+            <Typography variant="body2" color="textSecondary">
+              {getAverageRating(movie.id)}
+            </Typography>
+          </div>
         </CardContent>
       </CardActionArea>
     </Card>

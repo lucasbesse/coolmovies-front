@@ -26,6 +26,17 @@ export default function ReviewsPage() {
     (r): r is MovieReview => r !== null
   );
 
+  function getAverageRating(movieId: string) {
+    const reviewsForMovie = allReviews.filter(r => r.movieByMovieId?.id === movieId);
+
+    if (reviewsForMovie.length === 0) return 0;
+
+    const sum = reviewsForMovie.reduce((acc, r) => acc + (r.rating ?? 0), 0);
+    console.log("average", (sum / reviewsForMovie.length));
+    return Number((sum / reviewsForMovie.length).toFixed(1));
+  }
+
+
   const filteredReviews = selectedMovie
     ? allReviews.filter((r) => r.movieByMovieId?.id === selectedMovie.id)
     : [];
@@ -60,16 +71,16 @@ export default function ReviewsPage() {
           </button>
         )}
 
-        <h1 style={{ margin: 0 }}>{selectedMovie ? "Reviews" : "Available Movies"}</h1>
+        <h1 style={{ margin: 0 }}>{selectedMovie ? <>Reviews <span style={{ color: "#afadadff", fontSize: "26px" }}>({filteredReviews.length})</span></> : "Available Movies"}</h1>
       </div>
 
       {!selectedMovie && (
-        <MoviesList movies={movies} onSelect={(movie) => setSelectedMovie(movie)} />
+        <MoviesList movies={movies} onSelect={(movie) => setSelectedMovie(movie)} getAverageRating={getAverageRating} />
       )}
 
       {selectedMovie && (
         <>
-          <MoviesSmallCard selectedMovie={selectedMovie} />
+          <MoviesSmallCard selectedMovie={selectedMovie} getAverageRating={getAverageRating}/>
           <ReviewsList reviews={filteredReviews} />
         </>
       )}
