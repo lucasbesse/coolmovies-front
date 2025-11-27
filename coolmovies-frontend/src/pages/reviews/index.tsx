@@ -13,7 +13,7 @@ import MoviesSmallCard from "../../features/example/components/movies/MovieSmall
 import AddReviewModal from "./components/AddReviewModal";
 import { selectMovie, clearSelectedMovie } from "../../state/reviews/reviewsSlice";
 import { RootState } from "../../state/store";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ReviewsPage() {
@@ -101,7 +101,28 @@ export default function ReviewsPage() {
           >
           </Button>
         )}
-        <h1 style={{ margin: 0 }}>{selectedMovie ? <>Reviews <span style={{ color: "#afadadff", fontSize: "26px" }}>({filteredReviews.length})</span></> : "Available Movies"}</h1>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <Typography
+            variant="h4"
+            sx={{ mb: 1 }}
+          >
+            {selectedMovie ? (
+              <>
+                Reviews{" "}
+                <span style={{ color: "#afadadff", fontSize: "26px" }}>
+                  ({filteredReviews.length})
+                </span>
+              </>
+            ) : (
+              "Available Movies"
+            )}
+          </Typography>
+          {!selectedMovie && (
+            <Typography>
+              Click on the movie cards to see reviews!
+            </Typography>
+          )}
+        </div>
       </div>
 
       {!selectedMovie && (
