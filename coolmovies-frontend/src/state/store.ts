@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { CreateStoreOptions } from './types';
 import { exampleEpics, exampleReducer } from '../features/example/state';
-import reviewsReducer from '../state/reviews/reviewsSlice';
+import loadingReducer from './loading.slice';
 
 const rootEpic = combineEpics<any, any, RootState>(exampleEpics);
 
@@ -17,7 +17,7 @@ export const createStore = ({ epicDependencies }: CreateStoreOptions) => {
       getDefaultMiddleware().concat(epicMiddleware),
     reducer: {
       example: exampleReducer,
-      reviews: reviewsReducer,
+      loading: loadingReducer
     },
   });
 

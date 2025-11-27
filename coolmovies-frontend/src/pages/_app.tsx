@@ -8,6 +8,7 @@ import { EnhancedStore } from '@reduxjs/toolkit';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { createTheme, ThemeProvider } from '@mui/material';
 import Header from '../features/example/components/Header/Header';
+import LoadingOverlay from '../features/example/components/Loading/LoadingOverlay';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const [store, setStore] = useState<EnhancedStore | null>(null);
@@ -48,6 +49,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
         <ApolloProvider client={client}>
           <ThemeProvider theme={theme}>
             <Header />
+            <LoadingOverlay />
             <Component {...pageProps} />
           </ThemeProvider>
         </ApolloProvider>

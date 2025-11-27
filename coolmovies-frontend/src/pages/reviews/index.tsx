@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useGetReviewsQuery,
   useGetMoviesQuery,
@@ -11,24 +11,20 @@ import MoviesList from "../../features/example/components/movies/MoviesList";
 import ReviewsList from "./components/ReviewsList";
 import MoviesSmallCard from "../../features/example/components/movies/MovieSmallCard";
 import AddReviewModal from "./components/AddReviewModal";
-import { selectMovie, clearSelectedMovie } from "../../state/reviews/reviewsSlice";
-import { RootState } from "../../state/store";
 import { Button, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../state";
+import { loadingActions } from "../../state/loading.slice";
 
 export default function ReviewsPage() {
   const [openModal, setOpenModal] = useState(false);
-
-  const dispatch = useDispatch();
-  const selectedMovie = useSelector((state: RootState) => state.reviews.selectedMovie);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const moviesQuery = useGetMoviesQuery();
   const reviewsQuery = useGetReviewsQuery();
   const { data: userData } = useGetCurrentUserQuery();
   const [createReview] = useCreateReviewMutation();
 
-  if (moviesQuery.loading || reviewsQuery.loading) return <div style={{width: '100%', textAlign: 'center', marginTop: 4}}>Loading...</div>;
-  if (moviesQuery.error || reviewsQuery.error) return <div>Error loading data.</div>;
+  const dispatch = useAppDispatch();
 
   const movies = (moviesQuery.data?.allMovies?.nodes ?? []).filter(
     (m): m is Movie => m !== null
@@ -48,7 +44,6 @@ export default function ReviewsPage() {
     if (reviewsForMovie.length === 0) return 0;
 
     const sum = reviewsForMovie.reduce((acc, r) => acc + (r.rating ?? 0), 0);
-    console.log("average", (sum / reviewsForMovie.length));
     return Number((sum / reviewsForMovie.length).toFixed(1));
   }
 
@@ -64,6 +59,7 @@ export default function ReviewsPage() {
     if (!userData?.currentUser) return;
 
     try {
+      dispatch(loadingActions.show());
       await createReview({
         variables: {
           movieId: selectedMovie?.id,
@@ -78,8 +74,25 @@ export default function ReviewsPage() {
 
     } catch (error) {
       console.error("Error creating review", error);
+    } finally {
+      dispatch(loadingActions.hide());
     }
   }
+
+  useEffect(() => {
+    const isLoading = moviesQuery.loading || reviewsQuery.loading;
+
+    if (isLoading) {
+      dispatch(loadingActions.show());
+    } else {
+
+      //Here I added a small timeout just to show the loading overlay for a bit
+      setTimeout(() =>{
+        dispatch(loadingActions.hide());
+      }, 600)
+      
+    }
+  }, [moviesQuery.loading, reviewsQuery.loading, dispatch]);
 
   return (
     <div style={{ padding: 40, textAlign: "center" }}>
@@ -94,7 +107,7 @@ export default function ReviewsPage() {
       >
         {selectedMovie && (
           <Button
-            onClick={() => dispatch(clearSelectedMovie())}
+            onClick={() => setSelectedMovie(null)}
             variant="text"
             startIcon={<i className="fa-solid fa-arrow-left"></i>}
             sx={{ fontSize: "18px" }}
@@ -126,7 +139,7 @@ export default function ReviewsPage() {
       </div>
 
       {!selectedMovie && (
-        <MoviesList movies={movies} onSelect={(movie) => dispatch(selectMovie(movie))} getAverageRating={getAverageRating} />
+        <MoviesList movies={movies} onSelect={(movie) => setSelectedMovie(movie)} getAverageRating={getAverageRating} />
       )}
 
       {selectedMovie && (
