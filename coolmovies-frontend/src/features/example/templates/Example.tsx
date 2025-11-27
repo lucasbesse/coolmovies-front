@@ -94,7 +94,7 @@ const Example = () => {
   );
 };
 
-const styles = {
+export const styles = {
   root: css({
     height: '100vh',
     width: '100%',

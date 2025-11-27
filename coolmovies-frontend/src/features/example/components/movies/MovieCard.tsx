@@ -17,6 +17,13 @@ export default function MovieCard({ movie, onSelect, getAverageRating }: Props) 
         boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
         border: "1px solid #cae4ffff",
         backgroundColor: "white",
+        transform: "translateY(0)",
+        animation: "fadein 0.4s ease",
+        transition: "0.2s ease",
+        "&:hover": {
+          transform: "translateY(-6px)",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.15)"
+        }
       }}
     >
       <CardActionArea onClick={() => onSelect(movie)}>
@@ -47,7 +54,7 @@ export default function MovieCard({ movie, onSelect, getAverageRating }: Props) 
           </Typography>
 
           <div style={{display: "flex", alignItems: "center", gap: 5}}>
-            <Rating value={getAverageRating(movie.id)} readOnly size="small" precision={0.5} />
+            <Rating value={getAverageRating(movie.id)} readOnly size="medium" precision={0.5} />
             <Typography variant="body2" color="textSecondary">
               {getAverageRating(movie.id)}
             </Typography>

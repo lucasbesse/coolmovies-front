@@ -1,8 +1,12 @@
-import type { NextPage } from 'next';
-import { Example } from '../features/example/';
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-const Home: NextPage = () => {
-  return <Example />;
-};
+export default function Home() {
+  const router = useRouter();
 
-export default Home;
+  useEffect(() => {
+    router.replace("/reviews");
+  }, [router]);
+
+  return null;
+}

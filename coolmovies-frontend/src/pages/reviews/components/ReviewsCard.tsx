@@ -1,6 +1,6 @@
 import { Card, CardContent, Avatar, Typography, Box, Rating, Button } from "@mui/material";
 import { MovieReview } from "../../../generated/graphql";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Props = {
   review: MovieReview;
@@ -8,6 +8,21 @@ type Props = {
 
 export default function ReviewCard({ review }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [shouldShowSeeMore, setShouldShowSeeMore] = useState(false);
+
+  const textRef = useRef<HTMLParagraphElement | null>(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const el = textRef.current;
+
+      const fullHeight = el.scrollHeight;
+
+      const maxCollapsedHeight = 160;
+
+      setShouldShowSeeMore(fullHeight > maxCollapsedHeight);
+    }
+  }, [review.body]);
 
   return (
     <Card
@@ -32,7 +47,7 @@ export default function ReviewCard({ review }: Props) {
 
         <Box sx={{ textAlign: "left" }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-            {review.title}
+            {review.userReviewer?.name || "Anonymous"}
           </Typography>
 
           <Typography variant="caption" sx={{ color: "gray" }}>
@@ -40,19 +55,35 @@ export default function ReviewCard({ review }: Props) {
           </Typography>
         </Box>
       </Box>
-
       <Typography
+        variant="h6"
+        sx={{
+          fontWeight: 700,
+          mb: 1,
+          maxWidth: "100%",
+
+          ...( !expanded && {
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          })
+        }}
+      >
+        {review.title}
+      </Typography>
+      <Typography
+        ref={textRef}
         sx={{
           fontSize: "0.95rem",
           color: "#333",
-          maxHeight: expanded ? 220 : 160,
+          maxHeight: expanded ? 220 : 110,
           overflowY: expanded ? "auto" : "hidden",
           transition: "0.2s ease",
-          mb: 1,
+          mb: 2,
 
           ...( !expanded && {
             display: "-webkit-box",
-            WebkitLineClamp: 7,
+            WebkitLineClamp: 5,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -71,22 +102,24 @@ export default function ReviewCard({ review }: Props) {
         {review.body}
       </Typography>
 
-      {!expanded ? (
-        <Button
-          variant="text"
-          onClick={() => setExpanded(true)}
-          sx={{ textTransform: "none", fontSize: "0.9rem" }}
-        >
-          See more
-        </Button>
-      ) : (
-        <Button
-          variant="text"
-          onClick={() => setExpanded(false)}
-          sx={{ textTransform: "none", fontSize: "0.9rem" }}
-        >
-          See less
-        </Button>
+      {shouldShowSeeMore && (
+        !expanded ? (
+          <Button
+            variant="text"
+            onClick={() => setExpanded(true)}
+            sx={{ textTransform: "none", fontSize: "0.9rem" }}
+          >
+            See more
+          </Button>
+        ) : (
+          <Button
+            variant="text"
+            onClick={() => setExpanded(false)}
+            sx={{ textTransform: "none", fontSize: "0.9rem" }}
+          >
+            See less
+          </Button>
+        )
       )}
     </Card>
   );

@@ -11,18 +11,23 @@ import MoviesList from "../../features/example/components/movies/MoviesList";
 import ReviewsList from "./components/ReviewsList";
 import MoviesSmallCard from "../../features/example/components/movies/MovieSmallCard";
 import AddReviewModal from "./components/AddReviewModal";
+import { selectMovie, clearSelectedMovie } from "../../state/reviews/reviewsSlice";
+import { RootState } from "../../state/store";
 import { Button } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ReviewsPage() {
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [openModal, setOpenModal] = useState(false);
+
+  const dispatch = useDispatch();
+  const selectedMovie = useSelector((state: RootState) => state.reviews.selectedMovie);
 
   const moviesQuery = useGetMoviesQuery();
   const reviewsQuery = useGetReviewsQuery();
   const { data: userData } = useGetCurrentUserQuery();
   const [createReview] = useCreateReviewMutation();
 
-  if (moviesQuery.loading || reviewsQuery.loading) return <div>Loading...</div>;
+  if (moviesQuery.loading || reviewsQuery.loading) return <div style={{width: '100%', textAlign: 'center', marginTop: 4}}>Loading...</div>;
   if (moviesQuery.error || reviewsQuery.error) return <div>Error loading data.</div>;
 
   const movies = (moviesQuery.data?.allMovies?.nodes ?? []).filter(
@@ -89,7 +94,7 @@ export default function ReviewsPage() {
       >
         {selectedMovie && (
           <Button
-            onClick={() => setSelectedMovie(null)}
+            onClick={() => dispatch(clearSelectedMovie())}
             variant="text"
             startIcon={<i className="fa-solid fa-arrow-left"></i>}
             sx={{ fontSize: "18px" }}
@@ -100,22 +105,23 @@ export default function ReviewsPage() {
       </div>
 
       {!selectedMovie && (
-        <MoviesList movies={movies} onSelect={(movie) => setSelectedMovie(movie)} getAverageRating={getAverageRating} />
+        <MoviesList movies={movies} onSelect={(movie) => dispatch(selectMovie(movie))} getAverageRating={getAverageRating} />
       )}
 
       {selectedMovie && (
-        <>
+        <div style={{animation: "fadein 0.4s ease"}}>
           <MoviesSmallCard selectedMovie={selectedMovie} getAverageRating={getAverageRating}/>
           <div style={{width: '100%', display: 'flex', justifyContent: 'center', margin: '20px 0'}}>
             <Button
               onClick={() => setOpenModal(true)}
               variant="contained"
+              size="large"
             >
             + Add Review
             </Button>
           </div>
           <ReviewsList reviews={filteredReviews} />
-        </>
+        </div>
       )}
 
       <AddReviewModal
