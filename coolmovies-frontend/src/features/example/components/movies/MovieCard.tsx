@@ -1,5 +1,6 @@
 import { Card, CardActionArea, CardContent, Typography, Rating } from "@mui/material";
 import { Movie } from "../../../../generated/graphql";
+import { styles } from "../styles";
 
 type Props = {
   movie: Movie;
@@ -10,21 +11,7 @@ type Props = {
 export default function MovieCard({ movie, onSelect, getAverageRating }: Props) {
   return (
     <Card
-      sx={{
-        width: 260,
-        borderRadius: "20px",
-        overflow: "hidden",
-        boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
-        border: "1px solid #cae4ffff",
-        backgroundColor: "white",
-        transform: "translateY(0)",
-        animation: "fadein 0.4s ease",
-        transition: "0.2s ease",
-        "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.15)"
-        }
-      }}
+      sx={styles.movieCard}
     >
       <CardActionArea onClick={() => onSelect(movie)}>
         <img

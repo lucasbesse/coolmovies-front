@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Rating, Typography } from "@mui/material";
 import { Movie } from "../../../../generated/graphql";
+import { styles } from "../styles";
 
 type Props = {
     selectedMovie: Movie;
@@ -11,17 +12,7 @@ export default function MoviesSmallCard({ selectedMovie, getAverageRating }: Pro
         <div style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Card
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  width: 'max-content',
-                  padding: 1,
-                  borderRadius: 3,
-                  border: "1px solid #8ca5e2ff",
-                  boxShadow: 'none',
-                  backgroundColor: "#f0f5ffff",
-                }}
+                sx={styles.movieSmallCard}
               >
                 <Box
                   sx={{

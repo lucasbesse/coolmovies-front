@@ -1,6 +1,7 @@
 import { Card, CardContent, Avatar, Typography, Box, Rating, Button } from "@mui/material";
 import { MovieReview } from "../../../generated/graphql";
 import { useState, useRef, useEffect } from "react";
+import { styles } from "../../style";
 
 type Props = {
   review: MovieReview;
@@ -26,19 +27,7 @@ export default function ReviewCard({ review }: Props) {
 
   return (
     <Card
-      sx={{
-        borderRadius: "24px",
-        width: 360,
-        height: 360,
-        p: 3,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        boxShadow: "0 3px 12px rgba(0,0,0,0.12)",
-        backgroundColor: "white",
-        border: "1px solid #cae4ffff",
-      }}
+      sx={styles.reviewCard}
     >
       <Rating value={review.rating ?? 0} precision={0.5} readOnly size="small" sx={{ mb: 3 }} />
 
@@ -57,47 +46,13 @@ export default function ReviewCard({ review }: Props) {
       </Box>
       <Typography
         variant="h6"
-        sx={{
-          fontWeight: 700,
-          mb: 1,
-          maxWidth: "100%",
-
-          ...( !expanded && {
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          })
-        }}
+        sx={styles.reviewTitle(expanded)}
       >
         {review.title}
       </Typography>
       <Typography
         ref={textRef}
-        sx={{
-          fontSize: "0.95rem",
-          color: "#333",
-          maxHeight: expanded ? 220 : 110,
-          overflowY: expanded ? "auto" : "hidden",
-          transition: "0.2s ease",
-          mb: 2,
-
-          ...( !expanded && {
-            display: "-webkit-box",
-            WebkitLineClamp: 5,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }),
-
-          scrollbarWidth: "thin",
-          scrollbarColor: "rgba(0,0,0,0.3) transparent",
-          "&::-webkit-scrollbar": { width: "6px" },
-          "&::-webkit-scrollbar-track": { background: "transparent" },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0,0,0,0.35)",
-            borderRadius: "8px",
-          },
-        }}
+        sx={styles.reviewText(expanded)}
       >
         {review.body}
       </Typography>

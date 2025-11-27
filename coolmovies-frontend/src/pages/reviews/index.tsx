@@ -150,7 +150,6 @@ export default function ReviewsPage() {
         onClose={() => setOpenModal(false)}
         onSubmit={(data) => handleCreateReview(data)}
       />
-      
     </div>
   );
 }
